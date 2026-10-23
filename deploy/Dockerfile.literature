@@ -1,0 +1,18 @@
+FROM python:3.12-slim-bookworm
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUTF8=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 HOME=/app/output/literature-worker \
+    PLAYWRIGHT_BROWSERS_PATH=/app/.browser-cache \
+    TEMP=/app/.cache/tmp TMP=/app/.cache/tmp TMPDIR=/app/.cache/tmp
+WORKDIR /app
+COPY requirements-literature.txt ./
+RUN mkdir -p .cache/tmp output/literature-worker runtime/literature-credentials \
+    && python -m venv .venv \
+    && .venv/bin/pip install --no-cache-dir -r requirements-literature.txt \
+    && .venv/bin/python -m playwright install --with-deps chromium \
+    && useradd --uid 10001 --no-create-home appuser \
+    && chown -R 10001:10001 /app
+COPY --chown=10001:10001 highscore_literature ./highscore_literature
+COPY --chown=10001:10001 deploy/container-entrypoint.py ./deploy/container-entrypoint.py
+USER 10001:10001
+ENTRYPOINT ["python", "-B", "./deploy/container-entrypoint.py"]
+CMD [".venv/bin/python", "-B", "-m", "highscore_literature", "--run", "--root", "."]

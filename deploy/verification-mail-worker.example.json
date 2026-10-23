@@ -1,0 +1,9 @@
+{
+  "server_url": "https://example.com/highscore/api",
+  "public_url": "https://example.com/highscore/",
+  "worker_id": "public-verification-mail-1",
+  "database_id": "verification-mail",
+  "mail_only": true,
+  "desktop_enabled": false,
+  "poll_seconds": 5
+}

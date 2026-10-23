@@ -1,0 +1,7 @@
+{
+  "databases": [
+    {
+      "path": "./data/private-databases/your-licensed-database.hsrdb"
+    }
+  ]
+}

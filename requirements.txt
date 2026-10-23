@@ -1,0 +1,5 @@
+pywinauto==0.6.9
+striprtf==0.0.33
+pywin32==312
+comtypes==1.4.17
+six==1.17.0

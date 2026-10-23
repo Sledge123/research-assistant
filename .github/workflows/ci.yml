@@ -1,0 +1,79 @@
+name: 公开源码验证
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repository:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PIP_DISABLE_PIP_VERSION_CHECK: '1'
+      PIP_CACHE_DIR: ${{ github.workspace }}/.cache/pip
+      npm_config_cache: ${{ github.workspace }}/.cache/npm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: 创建项目内缓存与验证环境
+        run: |
+          mkdir -p .cache/tmp .cache/pip .cache/npm
+          python -m venv .venv
+          .venv/bin/python -m pip install -r requirements-web.txt -r requirements-literature.txt
+      - name: 按锁文件安装前端
+        working-directory: web
+        run: npm ci
+      - name: 四文件、公开范围、定向业务测试和前端构建
+        env:
+          TMPDIR: ${{ github.workspace }}/.cache/tmp
+          TEMP: ${{ github.workspace }}/.cache/tmp
+          TMP: ${{ github.workspace }}/.cache/tmp
+        run: .venv/bin/python -B scripts/verify-repository.py --root .
+
+  web-container:
+    name: 基础 HTTP 容器启动
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 首先检查四文件与公开范围
+        run: python -B scripts/verify-repository.py --root . --checks-only
+      - name: 初始化项目内空运行目录
+        run: sudo python3 -B scripts/init-public-runtime.py --site-url https://example.com/
+      - name: 检查 Compose 配置
+        run: sudo docker compose -f ./deploy/compose.yaml config --quiet
+      - name: 从公开依赖构建并启动网站
+        run: sudo docker compose -f ./deploy/compose.yaml up -d --build web
+      - name: 检查根页面和 HTTP 健康响应
+        run: |
+          mkdir -p ./output/container-smoke
+          curl --fail --silent --show-error --retry 20 --retry-delay 2 --retry-connrefused --output ./output/container-smoke/index.html http://127.0.0.1:8787/
+          curl --fail --silent --show-error --retry 20 --retry-delay 2 --retry-connrefused --output ./output/container-smoke/health.json http://127.0.0.1:8787/highscore/api/health
+          python -B - <<'PY'
+          import json
+          from pathlib import Path
+          html = Path('output/container-smoke/index.html').read_text(encoding='utf-8')
+          health = json.loads(Path('output/container-smoke/health.json').read_text(encoding='utf-8'))
+          assert 'id="app"' in html and '/highscore/' in html
+          assert health['status'] == 'ok'
+          assert health['service_enabled'] is False and health['worker_online'] is False
+          print('基础根页面与 HTTP 健康响应通过；SMTP、数据库和真实业务未在此检查。')
+          PY
+      - name: 停止本次容器
+        if: always()
+        run: sudo docker compose -f ./deploy/compose.yaml down --remove-orphans

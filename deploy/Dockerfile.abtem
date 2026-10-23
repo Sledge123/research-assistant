@@ -1,0 +1,21 @@
+FROM python:3.12-slim-bookworm
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUTF8=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 HOME=/app/.cache/abtem XDG_CACHE_HOME=/app/.cache/abtem \
+    TMPDIR=/app/.cache/abtem/tmp TMP=/app/.cache/abtem/tmp TEMP=/app/.cache/abtem/tmp \
+    OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMBA_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+WORKDIR /app
+COPY requirements-abtem.txt ./
+RUN mkdir -p .cache/abtem/tmp output/abtem-worker runtime/science-lock \
+    && apt-get update && apt-get install -y --no-install-recommends libgomp1 libfftw3-double3 \
+    && rm -rf /var/lib/apt/lists/* \
+    && python -m venv .venv-abtem \
+    && .venv-abtem/bin/pip install --no-cache-dir -r requirements-abtem.txt \
+    && useradd --uid 10001 --no-create-home appuser \
+    && chown -R 10001:10001 /app
+COPY --chown=10001:10001 highscore_abtem ./highscore_abtem
+COPY --chown=10001:10001 highscore_crystal ./highscore_crystal
+COPY --chown=10001:10001 highscore_science ./highscore_science
+COPY --chown=10001:10001 deploy/container-entrypoint.py ./deploy/container-entrypoint.py
+USER 10001:10001
+ENTRYPOINT ["python", "-B", "./deploy/container-entrypoint.py"]
+CMD [".venv-abtem/bin/python", "-B", "-m", "highscore_abtem", "--run", "--root", "."]
