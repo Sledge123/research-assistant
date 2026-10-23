@@ -3114,24 +3114,6 @@
           }
         }
       }
-    },
-    "/highscore/": {
-      "get": {
-        "summary": "Placeholder",
-        "operationId": "placeholder_highscore__get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "text/html": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {

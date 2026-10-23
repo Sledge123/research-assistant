@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 import uuid
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -993,11 +993,21 @@ def create_app(root=None, settings=None):
     mount_research_library(app,store,root,session,admin,admin_writer,
         quota_bytes=config['research_library_quota_bytes'],
         min_free_bytes=config['research_library_min_free_bytes'])
+    @app.get("/highscore", include_in_schema=False)
+    @app.get("/highscore/", include_in_schema=False)
+    def legacy_home(request: Request):
+        query = "?" + request.url.query if request.url.query else ""
+        return RedirectResponse("/" + query, status_code=308)
+
     dist = root / "web/dist"
     if dist.is_dir() and (dist / "index.html").is_file():
+        @app.get("/", include_in_schema=False)
+        def home():
+            return FileResponse(dist / "index.html", media_type="text/html")
+
         app.mount("/highscore", StaticFiles(directory=dist, html=True), name="website")
     else:
-        @app.get("/highscore/", response_class=HTMLResponse)
+        @app.get("/", response_class=HTMLResponse, include_in_schema=False)
         def placeholder():
             return "<!doctype html><html lang='zh-CN'><meta charset='utf-8'><title>科研助手</title><body><h1>科研助手</h1><p>网站资源尚未构建，请管理员执行前端构建命令。</p></body></html>"
     return app
