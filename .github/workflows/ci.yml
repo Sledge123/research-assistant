@@ -58,7 +58,7 @@ jobs:
       - name: 检查 Compose 配置
         run: sudo docker compose -f ./deploy/compose.yaml config --quiet
       - name: 从公开依赖构建并启动网站
-        run: sudo docker compose -f ./deploy/compose.yaml up -d --build web
+        run: sudo docker compose -f ./deploy/compose.yaml up -d --build --wait --wait-timeout 120 web
       - name: 检查根页面和 HTTP 健康响应
         run: |
           mkdir -p ./output/container-smoke
