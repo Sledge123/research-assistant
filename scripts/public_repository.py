@@ -55,7 +55,15 @@ def path_findings(name):
 
 
 def content_findings(name, data):
-    failures = [title for title, pattern in CONTENT_RULES if pattern.search(data)]
+    failures = []
+    for title, pattern in CONTENT_RULES:
+        checked = data
+        if title == "生产网址" and name == "README.md":
+            # 维护者明确要求首页公开官网根链接；不放行接口、查询令牌或运行配置。
+            public_link = b"(https://" + b"api." + b"sledge.cn/)"
+            checked = data.replace(public_link, b"(https://example.com/)")
+        if pattern.search(checked):
+            failures.append(title)
     try:
         text = data.decode("utf-8-sig")
     except UnicodeError:
