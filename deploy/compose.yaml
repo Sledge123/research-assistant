@@ -1,0 +1,148 @@
+x-restricted: &restricted
+  user: "10001:10001"
+  restart: unless-stopped
+  init: true
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  logging:
+    driver: none
+
+services:
+  web:
+    <<: *restricted
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.web
+    env_file: [../runtime/web.env]
+    ports: ["127.0.0.1:8787:8787"]
+    volumes:
+      - ../runtime/web:/app/output/web
+      - ../runtime/literature-files:/app/output/literature
+      - ../runtime/research-library:/app/output/research-library
+      - ../runtime/abtem-files:/app/output/abtem
+      - ../runtime/pymatgen-files:/app/output/pymatgen
+      - ../runtime-cache/web:/app/.cache
+    mem_limit: 512m
+    cpus: 0.75
+    pids_limit: 128
+    healthcheck:
+      test: [CMD, .venv/bin/python, -B, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8787/highscore/api/health',timeout=5)"]
+      interval: 30s
+      timeout: 8s
+      retries: 3
+
+  database-worker:
+    <<: *restricted
+    profiles: [database]
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.worker
+    env_file: [../runtime/database.env]
+    command: [.venv/bin/python, -B, -m, highscore_database, --config, database-worker.local.json, --run]
+    volumes:
+      - ../database-worker.local.json:/app/database-worker.local.json:ro
+      - ../database.local.json:/app/database.local.json:ro
+      - ../data/private-databases:/app/data/private-databases:ro
+      - ../runtime/database-mail/runtime:/app/runtime:ro
+      - ../runtime/database-worker:/app/output
+      - ../runtime-cache/database:/app/.cache
+    mem_limit: 512m
+    cpus: 0.75
+    pids_limit: 64
+
+  mail-worker:
+    <<: *restricted
+    profiles: [mail]
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.worker
+    env_file: [../runtime/verification-mail.env]
+    command: [.venv/bin/python, -B, -m, highscore_database, --config, verification-mail-worker.local.json, --run, --mail-only]
+    volumes:
+      - ../verification-mail-worker.local.json:/app/verification-mail-worker.local.json:ro
+      - ../runtime/verification-mail/runtime:/app/runtime:ro
+      - ../runtime/verification-mail-worker:/app/output
+      - ../runtime-cache/verification-mail:/app/.cache
+    mem_limit: 256m
+    cpus: 0.5
+    pids_limit: 64
+
+  literature-worker:
+    <<: *restricted
+    profiles: [literature]
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.literature
+    env_file: [../runtime/literature.env]
+    environment:
+      LITERATURE_SERVER_URL: http://web:8787/highscore/api
+    volumes:
+      - ../runtime/literature-credentials:/app/runtime/literature-credentials:ro
+      - ../runtime/literature-worker:/app/output/literature-worker
+      - ../runtime-cache/literature:/app/.cache
+    mem_limit: 900m
+    cpus: 0.75
+    pids_limit: 160
+    shm_size: 128m
+
+  literature-mail-worker:
+    <<: *restricted
+    profiles: [literature-mail]
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.worker
+    env_file: [../runtime/literature-mail.env]
+    environment:
+      LITERATURE_MAIL_SERVER_URL: http://web:8787/highscore/api
+      LITERATURE_MAIL_SETTINGS_PATH: runtime/mail.encrypted.json
+    command: [.venv/bin/python, -B, -m, highscore_literature.mail_worker, --run]
+    volumes:
+      - ../runtime/literature-mail/runtime:/app/runtime:ro
+      - ../runtime/literature-mail-worker:/app/output/literature-mail
+      - ../runtime-cache/literature-mail:/app/.cache
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 48
+
+  abtem-worker:
+    <<: *restricted
+    profiles: [abtem]
+    stop_grace_period: 30s
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.abtem
+    env_file: [../runtime/abtem.env]
+    environment:
+      HIGHSCORE_ABTEM_SERVER_URL: http://web:8787/highscore/api/worker/abtem
+      HIGHSCORE_ABTEM_WORKER_ID: public-abtem-1
+      HIGHSCORE_SCIENCE_LOCK_PATH: runtime/science-lock/compute.lock
+    volumes:
+      - ../runtime/abtem-worker:/app/output/abtem-worker
+      - ../runtime-cache/abtem:/app/.cache/abtem
+      - ../runtime/science-lock:/app/runtime/science-lock
+    mem_limit: 640m
+    memswap_limit: 640m
+    cpus: 0.5
+    pids_limit: 96
+
+  pymatgen-worker:
+    <<: *restricted
+    profiles: [pymatgen]
+    stop_grace_period: 30s
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.pymatgen
+    env_file: [../runtime/pymatgen.env]
+    environment:
+      HIGHSCORE_PYMATGEN_SERVER_URL: http://web:8787/highscore/api/worker/pymatgen
+      HIGHSCORE_PYMATGEN_WORKER_ID: public-pymatgen-1
+      HIGHSCORE_SCIENCE_LOCK_PATH: runtime/science-lock/compute.lock
+    volumes:
+      - ../runtime/pymatgen-worker:/app/output/pymatgen-worker
+      - ../runtime-cache/pymatgen:/app/.cache/pymatgen
+      - ../runtime/science-lock:/app/runtime/science-lock
+    mem_limit: 640m
+    memswap_limit: 640m
+    cpus: 0.5
+    pids_limit: 96
