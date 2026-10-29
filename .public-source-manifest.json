@@ -1,16 +1,15 @@
 {
-  "version": 1,
   "files": {
     ".dockerignore": "845ef6a66b00a23adb6d55075dc07238b653736ac43c5935597bfb24fb345d62",
     ".gitattributes": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c",
     ".github/workflows/ci.yml": "9b79a72aab590aa9718eac3b5c0e03c5cbf838168b1b488d677a25c4dca383f9",
     ".gitignore": "1935b059349e75c58988c925d133e6ab3d558ecd4e17cc78acb4465e0defeb60",
-    "AGENTS.md": "a7a395b561b4689e1b9608f6a1f77334ef118490363535aae860a8a1822a3cee",
+    "AGENTS.md": "89358845eaf1c51be081c7645812757497d587025389c356b8f23ac7af3dd8ad",
     "CONTRIBUTING.md": "62e55deffec9de2cdc3ec9304d21b0b20b54ed50e9af22ad73c6d5bddac2b88d",
     "LICENSE": "4dcc964f82a21655933dbfb5ff740cd6137bac473f66ae82973abf5b1057e4ea",
-    "PROJECT_PLAN.md": "7850ab96d5feacb75cd9afb0c1e4254a90bd4441d245b973714117c9b60e1a61",
-    "README.md": "9f5843c7c4b02e9bb694f28d77d86cbd2774b8281dd9a7582109460ac750519c",
-    "TASKS.md": "6125e20f6360765ca726e776195b0b402f2ddaecceca75733fa40f6f9deac752",
+    "PROJECT_PLAN.md": "39399c3adccb81d08bb74bcaa3235af673dc3990bd514e731a8e7b16a5450bb5",
+    "README.md": "c06c5df9e3ac4b6c2342db0da21ac8871d8a8b856a9d2e5608aa77bd12f1d004",
+    "TASKS.md": "a09168e4b2794452b658ff67fe35c0267508d084ad879def6fd669572df17b3b",
     "THIRD_PARTY_NOTICES.md": "876c49c294505d900b7669af5f671403b87b55747c99e0b915080e9ecded3ef9",
     "app.py": "c718d14b44aa1fd1272c72fa81acae03a68e84d683d7ad35318db4ddc22641d4",
     "deploy/Dockerfile.abtem": "a4e9f76788dfb0bc3f7681c848b3ed99088b047c2d87e84332b267e1d000c809",
@@ -27,10 +26,10 @@
     "deploy/runtime.env.example": "e96ba43cfaa037e9841bd394d5796f51b52b19ab3e5d61072021a5d4e1af86eb",
     "deploy/verification-mail-worker.example.json": "f5c117fe242feb8c066533e3d5427f00683fb86b91ef59ab601f23ffe3a208fb",
     "docs/API.md": "283a9f65ec5d29352307186cd002c37d32f0df076e8ee68557adf20a1f9ee3b1",
-    "docs/FEATURES.md": "8590d00e07d3f4dda482aba41548c8d7cf7806b0229d95c30bf72f9968a4f235",
-    "docs/GETTING_STARTED.md": "878a8234f5a4fdca83916bd2aa8b12bf2ac2044486ba6e7962687b011454e927",
+    "docs/FEATURES.md": "46007b52cffb0849b7548d6f8d8f981eb9d400e4c5491881af26fb4bd73cc8cf",
+    "docs/GETTING_STARTED.md": "013b4d25673c4d410575140bec360707ac6855c1bd2b2328500907e6052a3451",
     "docs/SERVICE_RULES.md": "632633d57e9b1f68966dcc2e73c908f987d045c8897cd765d8b37f959ca86f56",
-    "docs/SOURCE_GUIDE.md": "93e772511a57fa01b7f8cac2c88102ec0eaea44065807cb68fe1328ab461430a",
+    "docs/SOURCE_GUIDE.md": "63e6c555901ce94bfd7ca9a2cd79dec6ef532f1b36ab7d553bc70110151e7f07",
     "docs/openapi.json": "7db1c49a2c0346056c8ea8012ddefef3986c6613bbe75d5a04dfd89655018374",
     "highscore_abtem/__init__.py": "7b154fe2561ec681f1ea33913794095ae7ed231a0010a257463ae8b38568df96",
     "highscore_abtem/__main__.py": "a7782f1fe516172d09078c6bae0d87c9d35078ce08e20d19c4a23254a4e5c215",
@@ -262,5 +261,6 @@
     "web/src/xrdSelection.test.mjs": "4d9abd544120455294a5e64bf50eb031c60c405e8f6738b2c4593bbe0903ec1d",
     "web/tsconfig.json": "b9a5a015e256725cbbb6c01e529ce6cf070129b7abafd6bac42140c0d7203e38",
     "web/vite.config.ts": "cd27e77e435f11aaca1b4185f0b33660a6d7ca7bda9d8b7a148dd2bab61b3f89"
-  }
+  },
+  "version": 1
 }
