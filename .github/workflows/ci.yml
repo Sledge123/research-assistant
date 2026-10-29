@@ -70,6 +70,15 @@ jobs:
           html = Path('output/container-smoke/index.html').read_text(encoding='utf-8')
           health = json.loads(Path('output/container-smoke/health.json').read_text(encoding='utf-8'))
           assert 'id="app"' in html and '/highscore/' in html
+          import re
+          from urllib.request import urlopen
+          asset = re.search(r'<script[^>]+src="(/highscore/assets/[^\"]+)"', html)
+          assert asset, '首页缺少构建后的脚本资源'
+          with urlopen('http://127.0.0.1:8787' + asset.group(1), timeout=5) as response:
+              assert response.status == 200 and len(response.read()) > 0
+          with urlopen('http://127.0.0.1:8787/highscore/?verify=synthetic-ci-token', timeout=5) as response:
+              assert response.status == 200
+              assert response.url == 'http://127.0.0.1:8787/?verify=synthetic-ci-token'
           assert health['status'] == 'ok'
           assert health['service_enabled'] is False and health['worker_online'] is False
           print('基础根页面与 HTTP 健康响应通过；SMTP、数据库和真实业务未在此检查。')

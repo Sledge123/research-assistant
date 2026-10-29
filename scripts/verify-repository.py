@@ -16,6 +16,7 @@ BUSINESS_TESTS = (
     "test_web_api", "test_shared_credits", "test_research_library", "test_pymatgen_credits",
     "test_pymatgen_api", "test_abtem_api", "test_literature_api", "test_xrd_peak_standard",
     "test_jade_zid", "test_jade_structure_reader", "test_admin_center", "test_science_queue",
+    "test_public_entrypoint",
 )
 
 
