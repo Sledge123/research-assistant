@@ -2,20 +2,20 @@
 
 文献求助、XRD 检索、衍射模拟与电化学分析，在浏览器中完成。
 
-**[立即使用科研助手](https://api.sledge.cn/)**
+**[访问科研助手](https://api.sledge.cn/)**
 
 [功能详解](./docs/FEATURES.md) · [使用指南](./docs/GETTING_STARTED.md)
 
-## 能帮你做什么
+## 功能概览
 
-| 科研需求 | 网站提供 | 可以得到什么 |
+| 功能 | 说明 | 输出 |
 | --- | --- | --- |
-| 分析电化学数据 | GITT、CV 容量贡献与 b 值、DRT 弛豫时间分析 | 交互图表、分析数据与结果包 |
-| 查 XRD 与晶体结构 | 按编号或化学式查询衍射卡片和结构记录 | 衍射报告、峰表、CIF 文件 |
-| 找论文 | 按题名发起文献求助，查看获取进度 | 核验通过的全文 PDF |
-| 模拟衍射与成像 | 基于晶体结构计算 XRD 理论峰、SAED 与 HRTEM | 科学图、数值及计算参数 |
-| 处理 VASP 文件 | 在线使用 VASPKIT 适配功能 | 所选功能的处理结果与文件 |
-| 找资料、交流经验 | 浏览资料库、按文件夹下载，在论坛提问交流 | 科研附件与讨论回复 |
+| 电化学分析 | GITT、CV 容量贡献与 b 值、DRT 弛豫时间分析 | 交互图表、分析数据与结果包 |
+| XRD 与 CIF 检索 | 按编号或化学式查询衍射卡片和结构记录 | 衍射报告、峰表、CIF 文件 |
+| 文献求助 | 按题名发起文献求助，查看获取进度 | 核验通过的全文 PDF |
+| 衍射模拟 | 基于晶体结构计算 XRD 理论峰、SAED 与 HRTEM | 模拟图像、数值及计算参数 |
+| VASPKIT 工具 | 在线处理 VASP 相关文件 | 所选功能的处理结果与文件 |
+| 资料与交流 | 浏览资料库、按文件夹下载，在论坛提问交流 | 科研附件与讨论回复 |
 
 ## 开始使用
 
@@ -23,8 +23,8 @@
 
 输入格式、费用、下载期限和适用条件见[使用指南](./docs/GETTING_STARTED.md)及网页提示。
 
-## 源码与参与
+## 开源与反馈
 
-本仓库分享 Python＋Vue 源码。线上网站持续更新，当前公开源码的范围见[源码指南](./docs/SOURCE_GUIDE.md)，自行部署见[部署指南](./deploy/README.md)。仓库不提供卡片数据库、派生索引、结构库或运行密钥。
+仓库提供 Python 后端与 Vue 前端源码。模块与版本见[源码指南](./docs/SOURCE_GUIDE.md)，自行部署见[部署指南](./deploy/README.md)。仓库不提供卡片数据库、派生索引、结构库或运行密钥。
 
-欢迎在 [Issues](https://github.com/Sledge123/research-assistant/issues) 反馈使用问题或提出建议，也欢迎[参与改进](./CONTRIBUTING.md)。原创代码采用 [MIT 许可](./LICENSE)，依赖与数据遵循[各自许可](./THIRD_PARTY_NOTICES.md)。
+使用问题与建议请提交 [Issues](https://github.com/Sledge123/research-assistant/issues)，代码贡献见[贡献指南](./CONTRIBUTING.md)。原创代码采用 [MIT 许可](./LICENSE)，依赖与数据遵循[各自许可](./THIRD_PARTY_NOTICES.md)。
